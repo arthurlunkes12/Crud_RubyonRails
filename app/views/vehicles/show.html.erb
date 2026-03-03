@@ -1,0 +1,19 @@
+<div class="container">
+  <div class="card">
+
+    <h2 class="title">Vehicle Details</h2>
+
+    <div class="vehicle-info">
+      <p><strong>Brand:</strong> <%= @vehicle.brand %></p>
+      <p><strong>Model:</strong> <%= @vehicle.model %></p>
+      <p><strong>Year:</strong> <%= @vehicle.year %></p>
+      <p><strong>Plate:</strong> <%= @vehicle.plate %></p>
+    </div>
+
+    <br>
+
+    <%= link_to "Edit", edit_vehicle_path(@vehicle), class: "new-button" %>
+    <%= link_to "Back", vehicles_path, class: "back-link" %>
+
+  </div>
+</div>

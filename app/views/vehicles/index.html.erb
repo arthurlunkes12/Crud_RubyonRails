@@ -1,0 +1,48 @@
+<div class="container">
+
+  <h2 class="title">Veículos</h2>
+
+  <%= link_to "New Vehicle", new_vehicle_path, class: "new-button" %>
+
+  <div class="search-form">
+    <%= search_form_for @q do |f| %>
+      <%= f.search_field :brand_cont, placeholder: "Buscar por marca" %>
+      <%= f.search_field :model_cont, placeholder: "Buscar por modelo" %>
+      <%= f.submit "Buscar" %>
+    <% end %>
+  </div>
+
+  <table class="vehicles-table">
+    <thead>
+      <tr>
+        <th>Marca</th>
+        <th>Modelo</th>
+        <th>Ano</th>
+        <th>Placa</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @vehicles.each do |vehicle| %>
+        <tr>
+          <td><%= vehicle.brand %></td>
+          <td><%= vehicle.model %></td>
+          <td><%= vehicle.year %></td>
+          <td><%= vehicle.plate %></td>
+          <td class="actions">
+            <%= link_to "Details", vehicle_path(vehicle) %>
+            <%= link_to "Edit", edit_vehicle_path(vehicle) %>
+            <%= link_to "Delete", vehicle_path(vehicle),
+                  data: { turbo_method: :delete, turbo_confirm: "Tem certeza?" } %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <div class="pagination">
+    <%= paginate @vehicles %>
+  </div>
+
+</div>

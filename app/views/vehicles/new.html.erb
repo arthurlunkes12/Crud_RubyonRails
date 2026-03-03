@@ -1,0 +1,35 @@
+<div class="container">
+  <div class="card">
+
+    <h2 class="title">New Vehicle</h2>
+
+    <%= form_with model: @vehicle do |f| %>
+
+      <div class="form-group">
+        <%= f.label :brand %>
+        <%= f.text_field :brand %>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :model %>
+        <%= f.text_field :model %>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :year %>
+        <%= f.number_field :year %>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :plate %>
+        <%= f.text_field :plate %>
+      </div>
+
+      <%= f.submit "Create Vehicle", class: "primary-button" %>
+
+    <% end %>
+
+    <%= link_to "Back", vehicles_path, class: "back-link" %>
+
+  </div>
+</div>
