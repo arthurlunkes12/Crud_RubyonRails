@@ -1,7 +1,9 @@
 class VehiclesController < ApplicationController
+    before_action :authenticate_user!
+
     def index
-        @q = Vehicle.ransack(params[:q])
-        @vehicles = @q.result.page(params[:page]).per(5)
+      @q = current_user.vehicles.ransack(params[:q])
+      @vehicles = @q.result.page(params[:page]).per(5)
     end
 
 
@@ -10,7 +12,7 @@ class VehiclesController < ApplicationController
     end
 
     def create
-         @vehicle = Vehicle.new(vehicle_params)
+         @vehicle = current_user.vehicles.build(vehicle_params)
 
          if @vehicle.save
             redirect_to vehicle_path(@vehicle)
