@@ -1,25 +1,32 @@
 class VehiclesController < ApplicationController
     before_action :authenticate_user!
+      load_and_authorize_resource
 
     def index
-      @q = current_user.vehicles.ransack(params[:q])
-      @vehicles = @q.result.page(params[:page]).per(5)
+      
+      if can? :manage, :all
+        @users = User.includes(:vehicles)
+      else
+        @q = Vehicle.accessible_by(current_ability).ransack(params[:q])
+        @vehicles = @q.result.includes(:user).page(params[:page]).per(5)
+      end
+      
+      
     end
 
-
     def new
-        @vehicle = Vehicle.new
+      @vehicle = Vehicle.new
     end
 
     def create
-         @vehicle = current_user.vehicles.build(vehicle_params)
+      @vehicle = current_user.vehicles.build(vehicle_params)
 
-         if @vehicle.save
-            redirect_to vehicle_path(@vehicle)
-         else
-            render :new 
+        if @vehicle.save
+          redirect_to vehicle_path(@vehicle)
+        else
+          render :new 
          
-         end
+        end
     end
     
     def show
@@ -54,6 +61,5 @@ class VehiclesController < ApplicationController
     def vehicle_params
         params.require(:vehicle).permit(:brand, :model, :year, :plate)
     end  
-    
     
 end

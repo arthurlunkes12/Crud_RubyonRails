@@ -2,47 +2,112 @@
 
 <div class="container">
 
-  <%= link_to "New Vehicle", new_vehicle_path, class: "new-button" %>
+  <% if current_user.admin? && @users.present? %>
 
-  <div class="search-form">
-    <%= search_form_for @q do |f| %>
-      <%= f.search_field :brand_cont, placeholder: "Buscar por marca" %>
-      <%= f.search_field :model_cont, placeholder: "Buscar por modelo" %>
-      <%= f.submit "Buscar" %>
+    <h1>Painel Administrativo</h1>
+
+    <% @users.each do |user| %>
+      <div class="card" style="margin-bottom: 30px;">
+        <h2><%= user.email %></h2>
+
+        <% if user.vehicles.any? %>
+          <table class="vehicles-table">
+            <thead>
+              <tr>
+                <th>Marca</th>
+                <th>Modelo</th>
+                <th>Ano</th>
+                <th>Placa</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <% user.vehicles.each do |vehicle| %>
+                <tr>
+                  <td><%= vehicle.brand %></td>
+                  <td><%= vehicle.model %></td>
+                  <td><%= vehicle.year %></td>
+                  <td><%= vehicle.plate %></td>
+
+                  <td class="actions">
+                    <%= link_to "Details", vehicle_path(vehicle) %>
+
+                    <% if can? :update, vehicle %>
+                      <%= link_to "Edit", edit_vehicle_path(vehicle) %>
+                    <% end %>
+
+                    <% if can? :destroy, vehicle %>
+                      <%= link_to "Delete", vehicle_path(vehicle),
+                        data: { turbo_method: :delete, turbo_confirm: "Tem certeza?" } %>
+                    <% end %>
+                  </td>
+
+                </tr>
+              <% end %>
+            </tbody>
+
+          </table>
+        <% else %>
+          <p>Esse usuário não possui veículos cadastrados.</p>
+        <% end %>
+
+      </div>
     <% end %>
-  </div>
 
-  <table class="vehicles-table">
-    <thead>
-      <tr>
-        <th>Marca</th>
-        <th>Modelo</th>
-        <th>Ano</th>
-        <th>Placa</th>
-        <th>Ações</th>
-      </tr>
-    </thead>
+  <% else %>
 
-    <tbody>
-      <% @vehicles.each do |vehicle| %>
-        <tr>
-          <td><%= vehicle.brand %></td>
-          <td><%= vehicle.model %></td>
-          <td><%= vehicle.year %></td>
-          <td><%= vehicle.plate %></td>
-          <td class="actions">
-            <%= link_to "Details", vehicle_path(vehicle) %>
-            <%= link_to "Edit", edit_vehicle_path(vehicle) %>
-            <%= link_to "Delete", vehicle_path(vehicle),
-                  data: { turbo_method: :delete, turbo_confirm: "Tem certeza?" } %>
-          </td>
-        </tr>
+    <%= link_to "New Vehicle", new_vehicle_path, class: "new-button" %>
+
+    <div class="search-form">
+      <%= search_form_for @q do |f| %>
+        <%= f.search_field :brand_cont, placeholder: "Buscar por marca" %>
+        <%= f.search_field :model_cont, placeholder: "Buscar por modelo" %>
+        <%= f.submit "Buscar" %>
       <% end %>
-    </tbody>
-  </table>
+    </div>
 
-  <div class="pagination">
-    <%= paginate @vehicles %>
-  </div>
+    <table class="vehicles-table">
+      <thead>
+        <tr>
+          <th>Marca</th>
+          <th>Modelo</th>
+          <th>Ano</th>
+          <th>Placa</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% @vehicles&.each do |vehicle| %>
+          <tr>
+            <td><%= vehicle.brand %></td>
+            <td><%= vehicle.model %></td>
+            <td><%= vehicle.year %></td>
+            <td><%= vehicle.plate %></td>
+
+            <td class="actions">
+              <%= link_to "Details", vehicle_path(vehicle) %>
+
+              <% if can? :update, vehicle %>
+                <%= link_to "Edit", edit_vehicle_path(vehicle) %>
+              <% end %>
+
+              <% if can? :destroy, vehicle %>
+                <%= link_to "Delete", vehicle_path(vehicle),
+                  data: { turbo_method: :delete, turbo_confirm: "Tem certeza?" } %>
+              <% end %>
+            </td>
+
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+
+    <div class="pagination">
+      <%= paginate @vehicles if @vehicles %>
+    </div>
+
+  <% end %>
 
 </div>
