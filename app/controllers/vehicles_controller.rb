@@ -5,10 +5,11 @@ class VehiclesController < ApplicationController
     def index
       
       if can? :manage, :all
-        @users = User.includes(:vehicles)
+        @q = Vehicle.ransack(params[:q])
+        @vehicles = @q.result.page(params[:page]).per(5)
       else
-        @q = Vehicle.accessible_by(current_ability).ransack(params[:q])
-        @vehicles = @q.result.includes(:user).page(params[:page]).per(5)
+        @q = Vehicle.where(status: 'available').ransack(params[:q])
+        @vehicles = @q.result.page(params[:page]).per(5)
       end
       
       
