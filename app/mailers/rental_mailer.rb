@@ -7,15 +7,12 @@ class RentalMailer < ApplicationMailer
       subject: "Confirmação de aluguel"
     )
   end
-  def cancelled(rental)
-    @rental = rental
-    mail(to: rental.user.email, subject: "Seu aluguel foi cancelado")
-  end
+
   def ending_soon(rental)
     @rental = rental
     mail(
       to: rental.user.email,
-      subject: "Seu aluguel termina amanhã"
+      subject: "Seu aluguel está acabando"
     )
   end
 

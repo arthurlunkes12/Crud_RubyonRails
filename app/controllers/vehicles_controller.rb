@@ -1,6 +1,6 @@
 class VehiclesController < ApplicationController
     before_action :authenticate_user!
-      load_and_authorize_resource except: [:cancel]
+      load_and_authorize_resource
 
   def index
     if can? :manage, :all
@@ -55,29 +55,23 @@ class VehiclesController < ApplicationController
 
     if @vehicle.status == "available"
 
+      duration = params[:duration].to_i
+      duration = 7 if duration > 7
+      duration = 1 if duration < 1
+
       rental = Rental.create!(
-      user: current_user,
-      vehicle: @vehicle,
-      start_date: Date.today
+        user: current_user,
+        vehicle: @vehicle,
+        start_date: Date.today,
+        end_date: Date.today + duration.days
       )
 
       @vehicle.update!(status: "rented")
 
       RentalMailer.confirmation(rental).deliver_now
 
-      redirect_to vehicles_path, notice: "Veículo alugado com sucesso!"
+      redirect_to vehicles_path, notice: "Veículo alugado por #{duration} dias!"
     end
-  end
-
-  def cancel
-    @rental = Rental.find(params[:id])
-
-    @rental.update_column(:end_date, Date.today)
-    @rental.vehicle.update!(status: "available")
-
-    RentalMailer.cancelled(@rental).deliver_now
-
-    redirect_to vehicles_path, notice: "Aluguel cancelado."
   end
 
     def destroy
