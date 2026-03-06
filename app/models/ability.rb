@@ -11,6 +11,7 @@ class Ability
       else
         can :read, Vehicle, status: "available"
         can :rent, Vehicle, status: "available"
+        can :cancel, Rental, user_id: user.id
       end
     end
 end

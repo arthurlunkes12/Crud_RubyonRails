@@ -2,73 +2,88 @@
 
 <div class="container">
 
-  <% if current_user.admin? && @users.present? %>
+  <% if current_user.admin? %>
 
     <h1>Painel Administrativo</h1>
 
-    <% @users.each do |user| %>
-      <div class="card" style="margin-bottom: 30px;">
-        <h2><%= user.email %></h2>
+    <table class="vehicles-table">
+      <thead>
+        <tr>
+          <th>Marca</th>
+          <th>Modelo</th>
+          <th>Ano</th>
+          <th>Placa</th>
+          <th>Status</th>
+          <th>Usuário</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
 
-        <% if user.vehicles.any? %>
-          <table class="vehicles-table">
-            <thead>
-              <tr>
-                <th>Marca</th>
-                <th>Modelo</th>
-                <th>Ano</th>
-                <th>Placa</th>
-                <th>Status</th>
-                <th>Ações</th>
-              </tr>
-            </thead>
+      <tbody>
+        <% @vehicles.each do |vehicle| %>
+          <tr>
+            <td><%= vehicle.brand %></td>
+            <td><%= vehicle.model %></td>
+            <td><%= vehicle.year %></td>
+            <td><%= vehicle.plate %></td>
 
-            <tbody>
-              <% user.vehicles.each do |vehicle| %>
-                <tr>
-                  <td><%= vehicle.brand %></td>
-                  <td><%= vehicle.model %></td>
-                  <td><%= vehicle.year %></td>
-                  <td><%= vehicle.plate %></td>
-
-                  <td>
-                    <% if vehicle.status == "available" %>
-                      <span style="color:green;">Disponível</span>
-                    <% else %>
-                      <span style="color:red;">Alugado</span>
-                    <% end %>
-                  </td>
-
-                  <td class="actions">
-                    <%= link_to "Details", vehicle_path(vehicle) %>
-
-                    <% if can? :update, vehicle %>
-                      <%= link_to "Edit", edit_vehicle_path(vehicle) %>
-                    <% end %>
-
-                    <% if can? :destroy, vehicle %>
-                      <%= link_to "Delete", vehicle_path(vehicle),
-                        data: { turbo_method: :delete, turbo_confirm: "Tem certeza?" } %>
-                    <% end %>
-                  </td>
-
-                </tr>
+            <td>
+              <% if vehicle.status == "available" %>
+                <span style="color:green;">Disponível</span>
+              <% else %>
+                <span style="color:red;">Alugado</span>
               <% end %>
-            </tbody>
+            </td>
 
-          </table>
-        <% else %>
-          <p>Esse usuário não possui veículos cadastrados.</p>
+            <td>
+              <% rental = vehicle.rentals.last %>
+              <% if rental %>
+                <%= rental.user.email %>
+              <% else %>
+                -
+              <% end %>
+            </td>
+
+            <td class="actions">
+
+              <%= link_to "Details", vehicle_path(vehicle) %>
+
+              <% if can? :update, vehicle %>
+                <%= link_to "Edit", edit_vehicle_path(vehicle) %>
+              <% end %>
+
+              <% if can? :destroy, vehicle %>
+                <%= link_to "Delete", vehicle_path(vehicle),
+                  data: { turbo_method: :delete, turbo_confirm: "Tem certeza?" } %>
+              <% end %>
+
+            </td>
+          </tr>
         <% end %>
-
-      </div>
-    <% end %>
+      </tbody>
+    </table>
 
   <% else %>
 
-    <% if can? :create, Vehicle %>
-      <%= link_to "New Vehicle", new_vehicle_path, class: "new-button" %>
+    <% if @active_rental %>
+
+      <h2>Seu carro alugado</h2>
+
+      <div class="card">
+        <p><strong>Marca:</strong> <%= @active_rental.vehicle.brand %></p>
+        <p><strong>Modelo:</strong> <%= @active_rental.vehicle.model %></p>
+        <p><strong>Ano:</strong> <%= @active_rental.vehicle.year %></p>
+        <p><strong>Placa:</strong> <%= @active_rental.vehicle.plate %></p>
+
+        <%= button_to "Cancelar aluguel",
+            cancel_rental_path(@active_rental),
+            method: :patch,
+            class: "delete-button" %>
+      </div>
+
     <% end %>
+
+    <h2>Veículos disponíveis</h2>
 
     <div class="search-form">
       <%= search_form_for @q do |f| %>
@@ -91,8 +106,9 @@
       </thead>
 
       <tbody>
-        <% @vehicles&.each do |vehicle| %>
+        <% @vehicles.each do |vehicle| %>
           <tr>
+
             <td><%= vehicle.brand %></td>
             <td><%= vehicle.model %></td>
             <td><%= vehicle.year %></td>
@@ -107,29 +123,35 @@
             </td>
 
             <td class="actions">
-              <%= link_to "Details", vehicle_path(vehicle) %>
 
-              <% if can? :rent, vehicle %>
-                <%= button_to "Alugar", rent_vehicle_path(vehicle), method: :post %>
+              <% rental = vehicle.rentals.find_by(user: current_user, end_date: nil) %>
+
+              <% if rental && can?(:cancel, rental) %>
+                
+                <%= button_to "Cancelar aluguel",
+                    cancel_rental_path(rental),
+                    method: :patch,
+                    class: "cancel-button" %>
+
+              <% elsif vehicle.status == "available" && can?(:rent, vehicle) %>
+
+                <%= button_to "Alugar",
+                    rent_vehicle_path(vehicle),
+                    method: :post,
+                    class: "rent-button" %>
+
               <% end %>
 
-              <% if can? :update, vehicle %>
-                <%= link_to "Edit", edit_vehicle_path(vehicle) %>
-              <% end %>
-
-              <% if can? :destroy, vehicle %>
-                <%= link_to "Delete", vehicle_path(vehicle),
-                  data: { turbo_method: :delete, turbo_confirm: "Tem certeza?" } %>
-              <% end %>
             </td>
 
           </tr>
         <% end %>
+
       </tbody>
     </table>
 
     <div class="pagination">
-      <%= paginate @vehicles if @vehicles %>
+      <%= paginate @vehicles %>
     </div>
 
   <% end %>

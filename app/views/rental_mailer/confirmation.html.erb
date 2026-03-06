@@ -1,0 +1,12 @@
+<h1>Aluguel confirmado</h1>
+
+<p>Olá <%= @rental.user.email %>,</p>
+
+<p>
+Você alugou o veículo
+<strong><%= @rental.vehicle.brand %> <%= @rental.vehicle.model %></strong>
+</p>
+
+<p>
+Data de início: <%= @rental.start_date %>
+</p>
