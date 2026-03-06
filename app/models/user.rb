@@ -3,6 +3,6 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable, 
          :confirmable
 
-  has_many :rentals, dependent: :destroy
+  has_many :rentals
   has_many :vehicles, through: :rentals
 end
