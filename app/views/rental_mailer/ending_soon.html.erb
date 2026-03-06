@@ -1,10 +1,17 @@
-<h1>Seu aluguel termina amanhã</h1>
+<% days_left = (@rental.end_date - Date.today).to_i %>
+
+<h1>Seu aluguel será encerrado em <%= days_left %> <%= "dia".pluralize(days_left) %></h1>
 
 <p>Olá <%= @rental.user.email %>,</p>
 
 <p>
-Seu aluguel do veículo <strong><%= @rental.vehicle.brand %> <%= @rental.vehicle.model %></strong>
-terminará amanhã.
+Seu aluguel do veículo 
+<strong><%= @rental.vehicle.brand %> <%= @rental.vehicle.model %></strong>
+será encerrado em <strong><%= days_left %> <%= "dia".pluralize(days_left) %></strong>.
+</p>
+
+<p>
+Data de encerramento: <strong><%= @rental.end_date.strftime("%d/%m/%Y") %></strong>
 </p>
 
 <p>

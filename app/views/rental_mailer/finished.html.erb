@@ -3,8 +3,10 @@
 <p>Olá <%= @rental.user.email %>,</p>
 
 <p>
-O aluguel do veículo <strong><%= @rental.vehicle.brand %> <%= @rental.vehicle.model %></strong>
-foi finalizado automaticamente após 7 dias.
+O aluguel do veículo 
+<strong><%= @rental.vehicle.brand %> <%= @rental.vehicle.model %></strong>
+foi finalizado automaticamente após 
+<strong><%= (@rental.end_date - @rental.start_date).to_i %> dias</strong>.
 </p>
 
 <p>

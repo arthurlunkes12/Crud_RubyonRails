@@ -1,7 +1,7 @@
 set :environment, "development"
 set :output, "log/cron.log"
 
-every 1.day, at: '9:00 am' do
+every 1.minute do
   rake "rentals:send_warning"
 end
 

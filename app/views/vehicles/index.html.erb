@@ -6,6 +6,7 @@
 
     <h1>Painel Administrativo</h1>
     <%= link_to "Novo Veículo", new_vehicle_path, class: "create-button" if can?(:create, Vehicle) %>
+
     <table class="vehicles-table">
       <thead>
         <tr>
@@ -36,7 +37,7 @@
             </td>
 
             <td>
-              <% rental = vehicle.rentals.find_by(end_date: nil) %>
+              <% rental = vehicle.rentals.where("end_date >= ?", Date.today).first %>
 
               <% if rental %>
                 <%= rental.user.email %>
@@ -44,7 +45,8 @@
                 -
               <% end %>
             </td>
-                        <td class="actions">
+
+            <td class="actions">
 
               <%= link_to "Details", vehicle_path(vehicle) %>
 
@@ -74,11 +76,6 @@
         <p><strong>Modelo:</strong> <%= @active_rental.vehicle.model %></p>
         <p><strong>Ano:</strong> <%= @active_rental.vehicle.year %></p>
         <p><strong>Placa:</strong> <%= @active_rental.vehicle.plate %></p>
-
-        <%= button_to "Cancelar aluguel",
-            cancel_rental_path(@active_rental),
-            method: :patch,
-            class: "delete-button" %>
       </div>
 
     <% end %>
@@ -124,21 +121,15 @@
 
             <td class="actions">
 
-              <% rental = vehicle.rentals.find_by(user: current_user, end_date: nil) %>
+              <% if vehicle.status == "available" && can?(:rent, vehicle) %>
 
-              <% if rental && can?(:cancel, rental) %>
-                
-                <%= button_to "Cancelar aluguel",
-                    cancel_rental_path(rental),
-                    method: :patch,
-                    class: "cancel-button" %>
+                <%= form_with url: rent_vehicle_path(vehicle), method: :post, local: true do %>
 
-              <% elsif vehicle.status == "available" && can?(:rent, vehicle) %>
+                  <%= number_field_tag :duration, 1, min: 1, max: 7 %>
 
-                <%= button_to "Alugar",
-                    rent_vehicle_path(vehicle),
-                    method: :post,
-                    class: "rent-button" %>
+                  <%= submit_tag "Alugar", class: "rent-button" %>
+
+                <% end %>
 
               <% end %>
 
