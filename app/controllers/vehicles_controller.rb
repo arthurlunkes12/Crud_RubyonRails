@@ -20,14 +20,15 @@ class VehiclesController < ApplicationController
     end
 
     def create
-      @vehicle = current_user.vehicles.build(vehicle_params)
+      @vehicle = Vehicle.new(vehicle_params)
+      @vehicle.status = "available"
 
-        if @vehicle.save
-          redirect_to vehicle_path(@vehicle)
-        else
-          render :new 
-         
-        end
+      if @vehicle.save
+        redirect_to vehicles_path, notice: "Vehicle criado com sucesso!"
+      else
+        puts @vehicle.errors.full_messages
+        render :new, status: :unprocessable_entity
+      end
     end
     
     def show

@@ -3,5 +3,10 @@ Rails.application.routes.draw do
   #get '/', controller: 'home', action: 'index'
   root 'vehicles#index'
 
-  resources :vehicles# only:[:index, :new, :create, :show, :edit, :update]
+  resources :vehicles do
+    member do
+      post :rent
+    end
+  end
+# only:[:index, :new, :create, :show, :edit, :update]
 end

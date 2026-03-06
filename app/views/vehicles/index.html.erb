@@ -18,6 +18,7 @@
                 <th>Modelo</th>
                 <th>Ano</th>
                 <th>Placa</th>
+                <th>Status</th>
                 <th>Ações</th>
               </tr>
             </thead>
@@ -29,6 +30,14 @@
                   <td><%= vehicle.model %></td>
                   <td><%= vehicle.year %></td>
                   <td><%= vehicle.plate %></td>
+
+                  <td>
+                    <% if vehicle.status == "available" %>
+                      <span style="color:green;">Disponível</span>
+                    <% else %>
+                      <span style="color:red;">Alugado</span>
+                    <% end %>
+                  </td>
 
                   <td class="actions">
                     <%= link_to "Details", vehicle_path(vehicle) %>
@@ -57,7 +66,9 @@
 
   <% else %>
 
-    <%= link_to "New Vehicle", new_vehicle_path, class: "new-button" %>
+    <% if can? :create, Vehicle %>
+      <%= link_to "New Vehicle", new_vehicle_path, class: "new-button" %>
+    <% end %>
 
     <div class="search-form">
       <%= search_form_for @q do |f| %>
@@ -74,6 +85,7 @@
           <th>Modelo</th>
           <th>Ano</th>
           <th>Placa</th>
+          <th>Status</th>
           <th>Ações</th>
         </tr>
       </thead>
@@ -86,8 +98,20 @@
             <td><%= vehicle.year %></td>
             <td><%= vehicle.plate %></td>
 
+            <td>
+              <% if vehicle.status == "available" %>
+                <span style="color:green;">Disponível</span>
+              <% else %>
+                <span style="color:red;">Alugado</span>
+              <% end %>
+            </td>
+
             <td class="actions">
               <%= link_to "Details", vehicle_path(vehicle) %>
+
+              <% if can? :rent, vehicle %>
+                <%= button_to "Alugar", rent_vehicle_path(vehicle), method: :post %>
+              <% end %>
 
               <% if can? :update, vehicle %>
                 <%= link_to "Edit", edit_vehicle_path(vehicle) %>
