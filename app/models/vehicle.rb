@@ -1,6 +1,6 @@
 class Vehicle < ApplicationRecord
 
-  has_many :rentals
+  has_many :rentals, dependent: :destroy
 
   validates :brand, :model, :plate, :year, presence: true
 

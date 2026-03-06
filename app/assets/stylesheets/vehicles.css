@@ -87,18 +87,18 @@ body {
 
 
 
-.new-button {
-  display: inline-block;
-  margin-bottom: 20px;
-  padding: 8px 14px;
-  background-color: #2563eb;
+.create-button{
+  background: #28a745;
   color: white;
+  padding: 10px 15px;
+  border-radius: 6px;
   text-decoration: none;
-  border-radius: 5px;
+  display: inline-block;
+  margin-bottom: 15px;
 }
 
-.new-button:hover {
-  background-color: #1d4ed8;
+.create-button:hover{
+  background: #218838;
 }
 
 .search-form {
