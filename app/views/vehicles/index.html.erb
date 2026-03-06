@@ -5,7 +5,7 @@
   <% if current_user.admin? %>
 
     <h1>Painel Administrativo</h1>
-
+    <%= link_to "Novo Veículo", new_vehicle_path, class: "create-button" if can?(:create, Vehicle) %>
     <table class="vehicles-table">
       <thead>
         <tr>
@@ -36,15 +36,15 @@
             </td>
 
             <td>
-              <% rental = vehicle.rentals.last %>
+              <% rental = vehicle.rentals.find_by(end_date: nil) %>
+
               <% if rental %>
                 <%= rental.user.email %>
               <% else %>
                 -
               <% end %>
             </td>
-
-            <td class="actions">
+                        <td class="actions">
 
               <%= link_to "Details", vehicle_path(vehicle) %>
 

@@ -1,0 +1,14 @@
+<h1>Aluguel finalizado</h1>
+
+<p>Olá <%= @rental.user.email %>,</p>
+
+<p>
+O aluguel do veículo <strong><%= @rental.vehicle.brand %> <%= @rental.vehicle.model %></strong>
+foi finalizado automaticamente após 7 dias.
+</p>
+
+<p>
+O veículo agora está disponível novamente no sistema.
+</p>
+
+<p>Obrigado por utilizar nosso sistema.</p>
